@@ -1,0 +1,50 @@
+name: ders-takip
+
+services:
+  # ─── PostgreSQL (sadece iç ağda) ──────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ders_takip
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # ports: # İnternete KAPALI — uygulama içinden erişilir
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ders_takip"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # ─── Next.js Uygulaması ────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"  # Dışarıya açık tek port
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/ders_takip
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-supersecret-change-in-prod}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      SEED_DB: ${SEED_DB:-false}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

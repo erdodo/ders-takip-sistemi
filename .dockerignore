@@ -1,0 +1,44 @@
+# Bağımlılıklar (container'da yüklenir)
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build çıktısı
+.next
+out
+build
+
+# Git
+.git
+.gitignore
+
+# Ortam dosyaları — hassas veriler image'a gömülmemeli
+.env
+.env.*
+!.env.docker
+
+# Geliştirme araçları
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+coverage
+*.test.*
+*.spec.*
+__tests__
+
+# Belgeler
+README.md
+*.md
+
+# Docker'ın kendisi
+Dockerfile*
+docker-compose*
+# docker-entrypoint.sh dahil edilir — image'a kopyalanması gerekiyor

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Vercel dışında (Docker / kendi sunucu) çalışırken de girişin çalışması için
+  trustHost: true,
   providers: [
     Credentials({
       name: "credentials",

@@ -2,6 +2,7 @@
 
 import { CAMPAIGN_END_LABEL } from "@/lib/campaign";
 import { useState } from "react";
+import { Honeypot } from "@/components/shared/Honeypot";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -15,6 +16,8 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hp, setHp] = useState("");
+  const [startedAt] = useState(() => Date.now());
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -29,7 +32,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, website: hp, startedAt }),
       });
 
       const data = await res.json();
@@ -61,7 +64,8 @@ export default function RegisterPage() {
           <p className="mt-2 text-sm font-medium text-emerald-600">{CAMPAIGN_END_LABEL} tarihine kadar tüm özellikler ücretsiz</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 relative">
+          <Honeypot value={hp} onChange={setHp} />
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
               {error}

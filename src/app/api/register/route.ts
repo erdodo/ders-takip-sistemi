@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
+import { BURST_MESSAGE, burstSince, isSignupBurst, spamCheck } from "@/lib/antispam";
 
 export async function POST(req: NextRequest) {
   try {
-    const { studioName, email, password, phone } = await req.json();
+    const body = await req.json();
+    const { studioName, email, password, phone } = body;
+    const spam = spamCheck(body);
+    if (spam) return NextResponse.json({ error: spam }, { status: 400 });
+    if (isSignupBurst(await prisma.studio.count({ where: { createdAt: { gte: burstSince() } } }))) {
+      return NextResponse.json({ error: BURST_MESSAGE }, { status: 429 });
+    }
 
     if (!studioName || !email || !password) {
       return NextResponse.json(

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/shared/DashboardShell";
+import { CampaignBanner } from "@/components/shared/CampaignBanner";
 
 export default async function DashboardLayout({
   children,
@@ -16,8 +17,11 @@ export default async function DashboardLayout({
   const studioName = (session.user as any).studioName;
 
   return (
-    <DashboardShell studioName={studioName}>
-      {children}
-    </DashboardShell>
+    <>
+      <CampaignBanner studioId={(session.user as any).studioId} />
+      <DashboardShell studioName={studioName}>
+        {children}
+      </DashboardShell>
+    </>
   );
 }

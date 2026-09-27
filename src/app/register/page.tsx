@@ -1,5 +1,6 @@
 "use client";
 
+import { CAMPAIGN_END_LABEL } from "@/lib/campaign";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -57,6 +58,7 @@ export default function RegisterPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Stüdyo Oluştur</h1>
           <p className="text-gray-500 text-sm mt-1">Ücretsiz hesabınızı açın</p>
+          <p className="mt-2 text-sm font-medium text-emerald-600">{CAMPAIGN_END_LABEL} tarihine kadar tüm özellikler ücretsiz</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
